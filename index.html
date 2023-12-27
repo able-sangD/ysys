@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>그림 그리기 게임</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+    }
+    h1 {
+      margin-top: 20px;
+    }
+    canvas {
+      border: 2px solid #000;
+      margin-top: 20px;
+      background-color: skyblue; /* 하늘색 배경 */
+    }
+  </style>
+</head>
+<body>
+  <h1>그림 그리기 게임</h1>
+  <canvas id="drawingCanvas" width="1000" height="600"></canvas>
+  <input type="color" id="colorPicker" value="#000000">
+  <input type="range" id="brushSize" min="1" max="50" value="5">
+  <button onclick="enableEraser()">지우개</button>
+  <script>
+    const canvas = document.getElementById('drawingCanvas');
+    const ctx = canvas.getContext('2d');
+
+    let isDrawing = false;
+    let isErasing = false;
+
+    canvas.addEventListener('mousedown', (event) => {
+      isDrawing = true;
+      ctx.beginPath();
+      if (isErasing) {
+        ctx.globalCompositeOperation = 'destination-out';
+      } else {
+        ctx.globalCompositeOperation = 'source-over';
+      }
+      ctx.moveTo(event.clientX - canvas.offsetLeft, event.clientY - canvas.offsetTop);
+    });
+
+    canvas.addEventListener('mousemove', (event) => {
+      if (isDrawing) {
+        ctx.lineTo(event.clientX - canvas.offsetLeft, event.clientY - canvas.offsetTop);
+        ctx.strokeStyle = document.getElementById('colorPicker').value;
+        ctx.lineWidth = document.getElementById('brushSize').value;
+        ctx.stroke();
+      }
+    });
+
+    canvas.addEventListener('mouseup', () => {
+      isDrawing = false;
+    });
+
+    canvas.addEventListener('mouseleave', () => {
+      isDrawing = false;
+    });
+
+    function enableEraser() {
+      isErasing = !isErasing;
+      if (isErasing) {
+        document.getElementById('colorPicker').value = '#ffffff'; // 지우개는 흰색으로 설정
+      }
+    }
+  </script>
+</body>
+</html>
